@@ -1,0 +1,56 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix gq: <http://marklogic.com/semantics/graphqueries#> .
+gq:city0 rdf:type gq:city .
+gq:city0 gq:name "Start City" .
+gq:city0 gq:lon 1.0 .
+gq:city0 gq:lat 1.0 .
+gq:city0 gq:id 0 .
+gq:city0 gq:near gq:city1 .
+gq:city0 gq:near gq:city2 .
+gq:city0 gq:distanceTo_1 1.2 .
+gq:city0 gq:distanceTo_2 1.1 .
+gq:city1 rdf:type gq:city .
+gq:city1 gq:name "Upper City" .
+gq:city1 gq:lon 1.0 .
+gq:city1 gq:lat 2.0 .
+gq:city1 gq:id 1 .
+gq:city1 gq:near gq:city0 .
+gq:city1 gq:near gq:city3 .
+gq:city1 gq:distanceTo_0 1.2 .
+gq:city1 gq:distanceTo_3 1.15 .
+gq:city2 rdf:type gq:city .
+gq:city2 gq:name "Right City" .
+gq:city2 gq:lon 2.0 .
+gq:city2 gq:lat 1.0 .
+gq:city2 gq:id 2 .
+gq:city2 gq:near gq:city0 .
+gq:city2 gq:near gq:city4 .
+gq:city2 gq:distanceTo_0 1.1 .
+gq:city2 gq:distanceTo_4 2.4 .
+gq:city3 rdf:type gq:city .
+gq:city3 gq:name "Upper Mid City" .
+gq:city3 gq:lon 2.0 .
+gq:city3 gq:lat 3.0 .
+gq:city3 gq:id 3 .
+gq:city3 gq:near gq:city1 .
+gq:city3 gq:near gq:city5 .
+gq:city3 gq:distanceTo_1 1.15 .
+gq:city3 gq:distanceTo_5 3.4 .
+gq:city4 rdf:type gq:city .
+gq:city4 gq:name "Rightmost City" .
+gq:city4 gq:lon 4.0 .
+gq:city4 gq:lat 2.0 .
+gq:city4 gq:id 4 .
+gq:city4 gq:near gq:city2 .
+gq:city4 gq:near gq:city5 .
+gq:city4 gq:distanceTo_2 2.4 .
+gq:city4 gq:distanceTo_5 6.2 .
+gq:city5 rdf:type gq:city .
+gq:city5 gq:name "Final City" .
+gq:city5 gq:lon 5.0 .
+gq:city5 gq:lat 5.0 .
+gq:city5 gq:id 5 .
+gq:city5 gq:near gq:city4 .
+gq:city5 gq:near gq:city3 .
+gq:city5 gq:distanceTo_4 6.2 .
+gq:city5 gq:distanceTo_3 3.4 .

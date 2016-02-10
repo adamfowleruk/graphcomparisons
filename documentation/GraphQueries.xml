@@ -1,0 +1,67 @@
+<export><workspace name="GraphQueries"><query name="DelTriples" focus="false" active="true" content-source="as:9902117176833297560:" mode="xquery">xquery version "1.0-ml";
+
+for $uri in fn:collection("128cities")/fn:base-uri(.)
+return xdmp:document-delete($uri)</query><query name="Count" focus="false" active="true" content-source="15503681624578399908:0:Apps" mode="sparql">select distinct ?s ?p ?o where {
+  ?s ?p ?o .
+}</query><query name="A*" focus="true" active="true" content-source="as:9902117176833297560:" mode="xquery">xquery version "1.0-ml";
+import module namespace l = "http://marklogic.com/semantics/graph" at "/app/models/graph.xqy";
+import module namespace lc = "http://marklogic.com/semantics/graph-cities" at "/app/models/graph-cities.xqy";
+
+l:astar("http://marklogic.com/semantics/graphqueries#city0",
+        "http://marklogic.com/semantics/graphqueries#city101",
+        function($s1,$s2,$triplecache) { lc:linearDistance($s1,$s2,$triplecache) },
+        function($s1,$s2,$triplecache) { lc:exactDistance($s1,$s2,$triplecache) },
+        "select distinct ?neighbour ?p ?o WHERE {?left &lt;http://marklogic.com/semantics/graphqueries#near&gt; ?neighbour . ?neighbour ?p ?o . }"
+)</query><query name="sparqltest" focus="false" active="true" content-source="as:9902117176833297560:" mode="xquery">xquery version "1.0-ml";
+
+import module namespace sem = "http://marklogic.com/semantics" at "/MarkLogic/semantics.xqy";
+let $neighbourQuery := 
+(: 
+"select ?neighbour ?lon ?lat WHERE {?left &lt;http://marklogic.com/semantics/graphqueries#near&gt; ?neighbour . ?neighbour &lt;http://marklogic.com/semantics/graphqueries#lon&gt; ?lon . ?neighbour &lt;http://marklogic.com/semantics/graphqueries#lat&gt; ?lat . }"
+:)
+"select distinct ?neighbour ?p ?o WHERE {?left &lt;http://marklogic.com/semantics/graphqueries#near&gt; ?neighbour . ?neighbour ?p ?o . }"
+let $triplecache := map:map()
+
+
+          let $params := map:map()
+          let $_ := map:put($params,"left",sem:iri("http://marklogic.com/semantics/graphqueries#city1"))
+          return (fn:distinct-values(
+            for $neighbour in &lt;item&gt;${sem:sparql($neighbourQuery,$params)}&lt;/item&gt;/*
+            (:
+            return $neighbour
+            :)
+            let $_ := xdmp:log($neighbour)
+            let $niri := xs:string($neighbour/json:entry[@key = "neighbour"]/json:value)
+            let $_ := xdmp:log("niri: " || $niri)
+            let $_ := 
+              map:put($triplecache,$niri,
+                let $cachemap := (map:get($triplecache,$niri),map:map())[1]
+                let $_ := 
+                  let $pred := xs:string($neighbour/json:entry[@key = "p"]/json:value)
+                  let $obj := xs:string($neighbour/json:entry[@key = "o"]/json:value)
+                  let $_ := xdmp:log("CACHING: " || $niri || " " || $pred || " " || $obj)
+                  return map:put($cachemap,$pred,(map:get($cachemap,$pred),$obj))
+                return $cachemap
+              )
+            return $niri ),$triplecache)
+            
+</query><query name="sparqltest2" focus="false" active="true" content-source="as:9902117176833297560:" mode="xquery">xquery version "1.0-ml";
+import module namespace sem = "http://marklogic.com/semantics" at "/MarkLogic/semantics.xqy";
+let $subjectIri := "http://marklogic.com/semantics/graphqueries#city1"
+let $params := map:map()
+  
+let $_ := map:put($params,"neighbour",sem:iri($subjectIri))
+  return
+&lt;item&gt;${sem:sparql("select ?neighbour ?p ?o WHERE {?neighbour a &lt;http://marklogic.com/semantics/graphqueries#city&gt; . ?neighbour ?p ?o .}",$params)}&lt;/item&gt;/json:object/json:entry</query><query name="sparql-values" focus="false" active="true" content-source="as:9902117176833297560:" mode="xquery">xquery version "1.0-ml";
+import module namespace sem = "http://marklogic.com/semantics" at "/MarkLogic/semantics.xqy";
+declare namespace sr = "http://www.w3.org/2005/sparql-results#";
+
+let $subjectIri := "http://marklogic.com/semantics/graphqueries#city1"
+let $params := map:map()
+  
+let $_ := map:put($params,"neighbour",sem:iri($subjectIri))
+  return
+  sem:query-results-serialize(
+sem:sparql-values("select ?neighbour ?p ?o WHERE {?neighbour a &lt;http://marklogic.com/semantics/graphqueries#city&gt; . ?neighbour ?p ?o .}",$params)
+,"xml")
+/sr:results/sr:result</query></workspace></export>
