@@ -124,7 +124,7 @@ declare function l:nextStep($targetIri as xs:string,$openset as map:map,$closeds
           let $cachemap := map:get($triplecache,$niri)
           let $cachemap := if (fn:empty($cachemap)) then map:map() else $cachemap
           let $pred := $neighbour/sr:binding[@name = "p"]/sr:uri/text()
-          
+
           let $_ := map:put($cachemap,$pred,(map:get($cachemap,$pred), $neighbour/sr:binding[@name = "o"]/element()/text()))
           let $_ := map:put($triplecache,$niri,$cachemap)
           return $niri
